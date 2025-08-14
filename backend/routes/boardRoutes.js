@@ -4,10 +4,10 @@ const { getBoards, getBoard, createBoard, deleteBoard, updateBoard } = require('
 const protect = require('../middleware/authMiddleware') 
 
 router.get("/", protect, getBoards)
+router.post("/", protect, createBoard)
 router.get("/:id", protect, getBoard)
 router.delete("/:id", protect, deleteBoard)
 router.put("/:id", protect, updateBoard)
-router.post("/create", protect, createBoard)
 
 
 module.exports = router

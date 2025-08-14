@@ -1,9 +1,25 @@
 const Card = require("../models/cardModel")
 
-exports.getCards = async (req, res) => {
+exports.getCardsFromList = async (req, res) => {
     try {
         const cards = await Card.find({
             listId: req.params.listId,
+            userId: req.user._id,
+        }).sort({ position: 1 })
+
+        if (!cards) return res.status(400).json({ message: "No cards or unauthorized user" })
+
+        res.status(200).json({ cards: cards, user: req.user })
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+}
+
+exports.getCardsFromBoard = async (req, res) => {
+    try {
+        const cards = await Card.find({
+            boardId: req.params.boardId,
             userId: req.user._id,
         }).sort({ position: 1 })
 

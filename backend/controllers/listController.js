@@ -1,4 +1,5 @@
 const List = require("../models/listModel")
+const Card = require("../models/cardModel")
 
 exports.getLists = async(req, res) => {
     try{
@@ -68,11 +69,16 @@ exports.updateList = async(req, res) => {
 exports.deleteList = async(req, res) => {
     try{
         const deletedList = await List.findOneAndDelete(
-            {_id: req.params.id, UserId: req.user._id}
+            {_id: req.params.id, userId: req.user._id}
         )
+        const deletedCards = await Card.deleteMany(
+            { listId: req.params.id, userId: req.user._id }
+        );
+
+
         if(!deletedList) return res.status(400).json({message: "List not found"})
 
-        res.status(200).json({message: "Successfuly deleted list", list: deletedList})
+        res.status(200).json({message: "Successfuly deleted list", list: deletedList, cards: deletedCards})
     }
     catch(err) {
         res.status(500).json({error: err.message})

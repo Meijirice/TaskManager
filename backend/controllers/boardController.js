@@ -1,4 +1,6 @@
 const Board = require('../models/boardModel')
+const List = require("../models/listModel")
+const Card = require("../models/cardModel")
 
 exports.getBoards = async (req, res) => {
   try {
@@ -39,10 +41,12 @@ exports.createBoard = async (req, res) => {
 
 exports.deleteBoard = async (req, res) => {
     try {
-        const deletedBoard = await Board.findOneAndDelete({userId: req.user._id})
+        const deletedBoard = await Board.findOneAndDelete({_id: req.params.id, userId: req.user._id})
+        const deletedLists = await List.deleteMany({boardId: req.params.id, userId: req.user._id})
+        const deletedCards = await Card.deleteMany({boardId: req.params.id, userId: req.user._id})
         if(!deletedBoard) return res.status(400).json({message: "Board does not exist"})
 
-        res.status(200).json({message: "Board successfully deleted", board: deletedBoard})
+        res.status(200).json({message: "Board successfully deleted", board: deletedBoard, lists: deletedLists, cards: deletedCards})
     }
     catch(err) {
         res.status(500).json({ message: err.message })

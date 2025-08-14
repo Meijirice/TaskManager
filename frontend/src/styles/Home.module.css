@@ -1,0 +1,117 @@
+.pageWrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8fafc;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    #005a8b,
+    #00456d
+  );
+  color: white;
+  padding: 4rem 1.5rem;
+  text-align: center;
+  transition: background-position 0.05s;
+  background-size: 150% 150%;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  opacity: 0.9;
+}
+
+.ctaButton {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.ctaButton:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.features {
+  padding: 4rem 1.5rem;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.featureCard {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.featureCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.featureCard h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a202c;
+  margin-bottom: 0.75rem;
+}
+
+.featureCard p {
+  color: #6b7280;
+  font-size: 1rem;
+}
+
+.finalCTA {
+  background-color: #3b82f6;
+  color: white;
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.finalCTA h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.finalCTA button {
+  background-color: white;
+  color: #3b82f6;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.finalCTA button:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
