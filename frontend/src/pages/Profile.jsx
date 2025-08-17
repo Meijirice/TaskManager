@@ -8,7 +8,7 @@ import { FiEdit, FiX } from "react-icons/fi";
 export default function Profile() {
   const [user, setUser] = useState({ name: "", email: "", bio: "" });
   const [loading, setLoading] = useState(false);
-  const [modalField, setModalField] = useState(""); // field being edited
+  const [modalField, setModalField] = useState("");
   const [fieldValue, setFieldValue] = useState("");
 
   useEffect(() => {

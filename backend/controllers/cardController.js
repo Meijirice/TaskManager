@@ -33,7 +33,7 @@ exports.getCardsFromBoard = async (req, res) => {
 }
 
 exports.createCard = async (req, res) => {
-    const { title, listId, boardId, status } = req.body
+    const { title, description, listId, boardId, status } = req.body
     try {
         if (!title || !listId || !boardId) {
             return res.status(400).json({ message: "Title, listId, and boardId are required" })
@@ -43,6 +43,7 @@ exports.createCard = async (req, res) => {
 
         const createdCard = await Card.create({
             title,
+            description,
             listId,
             boardId,
             userId: req.user._id,
