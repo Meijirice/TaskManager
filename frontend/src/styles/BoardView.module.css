@@ -293,7 +293,7 @@
 }
 
 .deleteCardButton {
-  position: absolute;
+  position: flex;
   top: 0.5rem;
   right: 0.5rem;
   background: none;
@@ -506,7 +506,8 @@
   gap: .75rem;
   width: 100%;
   background: transparent;
-  border: none;
+  border: solid #3b82f6;
+  border-radius: 10%;
   text-align: left;
   padding: .5rem .75rem;
   cursor: pointer;

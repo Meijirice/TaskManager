@@ -18,22 +18,29 @@ const Chevron = ({ open }) => (
   </svg>
 );
 
-export default function Card({ card, onDelete, onUpdate }) {
+export default function Card({
+  card,
+  onDelete,
+  onUpdate,
+  draggableProps,
+  dragHandleProps,
+  innerRef,
+}) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
-
   const [title, setTitle] = useState(card.title);
   const [description, setDescription] = useState(card.description || "");
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState("");
+
+  const detailsRef = useRef(null);
+  const [maxH, setMaxH] = useState(0);
 
   useEffect(() => {
     setTitle(card.title);
     setDescription(card.description || "");
   }, [card._id, card.title, card.description]);
 
-  const detailsRef = useRef(null);
-  const [maxH, setMaxH] = useState(0);
   useEffect(() => {
     if (!detailsRef.current) return;
     const h = detailsRef.current.scrollHeight;
@@ -58,13 +65,27 @@ export default function Card({ card, onDelete, onUpdate }) {
       setSaving(false);
     }
   };
+  const forwardDrag = (e) => {
+    dragHandleProps?.onMouseDown?.(e);
+    dragHandleProps?.onTouchStart?.(e);
+  };
 
   return (
-    <div className={`${styles.card} ${open ? styles.cardOpen : ""}`}>
+    <div
+      ref={innerRef}
+      {...draggableProps}
+      {...dragHandleProps} // Entire card draggable
+      onMouseDown={forwardDrag}
+      onTouchStart={forwardDrag}
+      className={`${styles.card} ${open ? styles.cardOpen : ""}`}
+    >
       <button
         type="button"
         className={styles.cardHeader}
-        onClick={() => setOpen((o) => !o)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((o) => !o);
+        }}
         aria-expanded={open}
         aria-controls={`card-details-${card._id}`}
       >
@@ -81,7 +102,7 @@ export default function Card({ card, onDelete, onUpdate }) {
         style={{ maxHeight: `${maxH}px`, opacity: open ? 1 : 0 }}
       >
         {!editing ? (
-          <div className={styles.cardBody} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.cardBody}>
             <p className={styles.cardDescription}>
               {card.description?.trim()
                 ? card.description
@@ -90,7 +111,10 @@ export default function Card({ card, onDelete, onUpdate }) {
             <div className={styles.cardActions}>
               <button
                 className={styles.secondaryButton}
-                onClick={() => setEditing(true)}
+                onClick={(e) => {
+                  e.stopPropagation(); // keep normal click
+                  setEditing(true);
+                }}
               >
                 Edit
               </button>
@@ -114,10 +138,7 @@ export default function Card({ card, onDelete, onUpdate }) {
             </div>
           </div>
         ) : (
-          <div
-            className={styles.cardEditForm}
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className={styles.cardEditForm}>
             {err && <div className={styles.errorBanner}>{err}</div>}
             <label className={styles.label} htmlFor={`title-${card._id}`}>
               Title

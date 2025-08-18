@@ -7,6 +7,7 @@ import List from "../components/List";
 import ListModal from "../components/ListModal";
 import CardModal from "../components/CardModal";
 import styles from "../styles/BoardView.module.css";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const BoardView = () => {
   const { boardId } = useParams();
@@ -176,7 +177,6 @@ const BoardView = () => {
         title: updated.title,
         description: updated.description,
       });
-      // reflect changes locally (prefer server values in case of transforms)
       setCards((prev) =>
         prev.map((c) =>
           c._id === updated._id
@@ -191,7 +191,47 @@ const BoardView = () => {
     } catch (err) {
       console.error("Error updating card:", err);
       setError("Failed to update card. Please try again.");
-      throw err; // let child show an inline error if desired
+      throw err;
+    }
+  };
+
+  const onDragEnd = async (result) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const cardId = draggableId;
+    const newListId = destination.droppableId;
+    const newPosition = destination.index;
+
+    setCards((prev) => {
+      let updated = [...prev];
+      const card = updated.find((c) => c._id === cardId);
+      if (!card) return prev;
+
+      updated = updated.filter((c) => c._id !== cardId);
+      updated.splice(newPosition, 0, {
+        ...card,
+        listId: newListId,
+        position: newPosition,
+      });
+      return updated;
+    });
+
+    try {
+      await axiosInstance.put(`/cards/${cardId}`, {
+        listId: newListId,
+        position: newPosition,
+      });
+    } catch (err) {
+      console.error("Error moving card:", err);
+      setError("Failed to move card. Refresh might fix it.");
     }
   };
 
@@ -291,19 +331,34 @@ const BoardView = () => {
               </button>
             </div>
           ) : (
-            <div className={styles.lists}>
-              {lists.map((list) => (
-                <List
-                  key={list._id}
-                  list={list}
-                  cards={getCardsForList(list._id)}
-                  onDeleteList={deleteList}
-                  onDeleteCard={deleteCard}
-                  onAddCard={openCreateCardModal}
-                  onUpdateCard={updateCard}
-                />
-              ))}
-            </div>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className={styles.lists}>
+                {lists.map((list) => (
+                  <Droppable
+                    droppableId={String(list._id)}
+                    key={String(list._id)}
+                  >
+                    {(provided) => (
+                      <div
+                        className={styles.listColumn}
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        <List
+                          list={list}
+                          cards={getCardsForList(list._id)}
+                          onDeleteList={deleteList}
+                          onDeleteCard={deleteCard}
+                          onAddCard={openCreateCardModal}
+                          onUpdateCard={updateCard}
+                        />
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                ))}
+              </div>
+            </DragDropContext>
           )}
         </div>
       </main>

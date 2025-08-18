@@ -1,6 +1,7 @@
 import React from "react";
 import Card from "./Card";
 import styles from "../styles/BoardView.module.css";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const List = ({
   list,
@@ -31,13 +32,26 @@ const List = ({
       </div>
 
       <div className={styles.cardsContainer}>
-        {cards.map((card) => (
-          <Card
-            key={card._id}
-            card={card}
-            onDelete={onDeleteCard}
-            onUpdate={onUpdateCard}
-          />
+        {cards.map((card, index) => (
+          <Draggable key={card._id} draggableId={card._id} index={index}>
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                style={{
+                  ...provided.draggableProps.style,
+                  opacity: snapshot.isDragging ? 0.7 : 1,
+                }}
+              >
+                <Card
+                  card={card}
+                  onDelete={onDeleteCard}
+                  onUpdate={onUpdateCard}
+                />
+              </div>
+            )}
+          </Draggable>
         ))}
 
         <button
